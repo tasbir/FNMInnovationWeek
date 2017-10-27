@@ -1,0 +1,32 @@
+
+Input
+ICD_Name, SourceSystem, ConsumerSystem, {source attributes, …, …, … }, {target attributes db columns, …, …, …}
+
+Scenario -
+
+{FirstName, {FIRSTNAME, First_Name, FNAME, }}
+{DOB, DateOfBirth}
+{SSN, SocialSecurityNumber}
+{ADDR, Address}
+{LOC, Address}
+{LASTNAME, LastName}
+{LAST_NAME, LastName}
+
+NPI Rule -
+{FirstName,LastName,DateOfBirth}
+{SocialSecurityNumber}
+{DriverLicenceNumber}
+{CreditCardNumber}
+{ConsumerName,Address,TelephoneNumber,EmailAddress}
+{ReoPropertyAddress,OccupantName}
+{PropertyAddress,CurrentUnpaidPrincipleBalance}
+{LenderLoanNumber,FinancialAccountNumber}
+{ServiceLoanNumber,FinancialAccountNumber}
+
+Not NPI
+{FICO Score}
+{FannieMaeLoanNumber}
+{REOPropertyIdentification}
+{BusinessName,Address,TelephoneNumber,EmailAddress}
+
+
