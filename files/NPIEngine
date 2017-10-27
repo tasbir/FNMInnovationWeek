@@ -1,0 +1,138 @@
+package com.biswa.home;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+
+public class NPIEngine {
+
+	static Map<String, String> npiMap = new HashMap<String, String>();
+	
+	//inserting comment from mac terminal
+	public static void main(String arg[]) throws Exception {
+		System.out.println("Hello World!");
+		buildMap();
+		System.out.println("map size: "+npiMap.size());
+		
+		//System.out.println("match=valule, Nomatch=null: " +npiMap.get("firstname"));
+		
+		String[] sourceKeys = {"fname","test", "nothing","ADDR1", "DOB", "lname", "Social2"};
+		String[] targetKeys = {"DOB2","ABCTARGET", "ANOTHERJUNK", "onemore"};
+		
+		StringBuffer finalbuff = runCheck("icd", "sourcesystem", "consys", sourceKeys, targetKeys);
+		System.out.println("if Name hit? "+checkRule1(finalbuff.toString()));
+		System.out.println("if SSN hit? "+checkSingleAttribNPIRule2(finalbuff.toString()));
+	}
+
+	
+	public static void buildMap() throws Exception{
+		BufferedReader br = new BufferedReader(new FileReader("/Users/BiswaSashi/Downloads/namemap.csv"));
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while ((line = br.readLine()) != null) {
+	               String[] namemap = line.split(",");
+	               if(namemap != null && namemap.length>1){
+	               //System.out.println("namemap [key= " + namemap[0] + " , value=" + namemap[1] + "]");
+	               npiMap.put(namemap[0],namemap[1]);
+	               }
+			}
+			//String everything = sb.toString();
+		} finally {
+			br.close();
+		}
+	}
+	
+	public static StringBuffer runCheck(String a, String b, String c, String[] sourceKeys, String [] targetKeys){
+		
+		StringBuffer finalbuf = new StringBuffer();
+		StringBuffer sourcebuf = new StringBuffer();
+		StringBuffer targetbuf = new StringBuffer();
+		
+		if(sourceKeys != null && sourceKeys.length>0){
+			
+			for(int i=0; i<sourceKeys.length; i++){
+				String source = sourceKeys[i];
+				//check agains screening map
+				String sfield = npiMap.get(source);
+				if(sfield != null){
+					//hit attribute
+					//System.out.println("===This is a Source hit attribute: "+sfield);
+					sourcebuf.append(sfield +",");
+					
+				} else {
+					//System.out.println("=== This is ZERO Source hit attribute ===== ");
+				}
+			}
+			System.out.println("===This is a Source hit attribute: "+sourcebuf);
+		}
+		if(targetKeys != null && targetKeys.length>0){
+			for(int i=0; i<targetKeys.length; i++){
+				String target = targetKeys[i];
+				//check against screening map
+				String tfield = npiMap.get(target);
+				if(tfield != null){
+					//hit attribute
+					//System.out.println("=== This is a Target hit attribute: "+tfield);
+					targetbuf.append(tfield +",");
+				} else {
+					//System.out.println("=== This is a ZERO Target hit === "+tfield);
+				}
+			}
+		}
+		System.out.println("===This is a Source hit attribute: "+targetbuf);
+		
+		finalbuf.append(sourcebuf);
+		finalbuf.append(targetbuf);
+		
+		System.out.println("===This is a FINAL hit attribute: "+finalbuf);
+		return finalbuf;
+	}
+	
+	public static boolean checkRule1(String input){
+		//String rule = "firstname, dateofbirth, lastname";
+
+		int ct = 0;
+		if(input.indexOf("firstname") > 0){
+			ct++;
+		};
+		if(input.indexOf("dateofbirth") > 0){
+			ct++;
+		};
+		if(input.indexOf("lastname") > 0){
+			ct++;
+		};
+
+		System.out.println("name ct: "+ct);
+		
+		if(ct ==3){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	public static boolean checkSingleAttribNPIRule2(String input){
+		//String rule = "firstname,lastname, dateofbirth,";
+
+		int ct = 0;
+		if(input.indexOf("SocialSecurityNumber") > 0){
+			ct++;
+		};
+
+		System.out.println("ssn ct: "+ct);
+		
+		if(ct ==1){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+}
+
